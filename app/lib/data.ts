@@ -16,6 +16,8 @@ const supabase = createClient(
 
 export async function fetchRevenue() {
   try {
+    await new Promise(resolve => setTimeout(resolve, 3000));
+
     const { data, error } = await supabase
       .from('revenue')
       .select('month, revenue')
@@ -23,7 +25,6 @@ export async function fetchRevenue() {
 
     if (error) throw error;
 
-    // Ensure the data matches the Revenue type
     const formattedRevenue: Revenue[] = data.map(item => ({
       month: item.month,
       revenue: Number(item.revenue)
@@ -111,36 +112,45 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
+// TypeScript Interface Update
+interface Invoice {
+  id: string; // UUIDs are represented as strings
+  amount: number;
+  date: string; // or Date, depending on how you handle dates
+  status: string;
+  name: string;
+  email: string;
+  image_url: string;
+}
 
+// In your fetchFilteredInvoices function
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
-) {
+): Promise<Invoice[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
-    const { data, error } = await supabase
-      .from('invoices')
-      .select(`
-        *,
-        customers (
-          name,
-          email,
-          image_url
-        )
-      `)
-      .or(`customers.name.ilike.%${query}%, customers.email.ilike.%${query}%`)
-      .order('date', { ascending: false })
-      .range(offset, offset + ITEMS_PER_PAGE - 1);
+    const { data, error } = await supabase.rpc('fetch_filtered_invoices', {
+      query_text: query,
+      limit_num: ITEMS_PER_PAGE,
+      offset_num: offset,
+    });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase RPC Error:', error);
+      throw error;
+    }
 
-    const invoices = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-      name: invoice.customers.name,
-      email: invoice.customers.email,
-      image_url: invoice.customers.image_url,
+    // Map the data to match your application's expected format
+    const invoices: Invoice[] = data.map((invoice) => ({
+      id: invoice.id,
+      amount: parseFloat(invoice.amount), // Ensure amount is a number
+      date: invoice.date,
+      status: invoice.status,
+      name: invoice.name,
+      email: invoice.email,
+      image_url: invoice.image_url,
     }));
 
     return invoices;
@@ -152,12 +162,16 @@ export async function fetchFilteredInvoices(
 
 export async function fetchInvoicesPages(query: string) {
   try {
-    const { count, error } = await supabase
-      .from('invoices')
-      .select('*', { count: 'exact' })
-      .or(`customers.name.ilike.%${query}%, customers.email.ilike.%${query}%`);
+    const { data, error } = await supabase.rpc('fetch_invoices_pages_count', {
+      query_text: query,
+    });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Supabase RPC Error:', error);
+      throw error;
+    }
+
+    const count = data; // Assuming data is the count value directly
 
     const totalPages = Math.ceil((count ?? 0) / ITEMS_PER_PAGE);
     return totalPages;
@@ -173,7 +187,7 @@ export async function fetchInvoiceById(id: string) {
       .from('invoices')
       .select(`
         *,
-        customers (
+        customers!customer_id (
           name,
           email,
           image_url

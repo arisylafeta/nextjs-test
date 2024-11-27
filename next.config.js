@@ -13,6 +13,7 @@ const nextConfig = {
   },
   experimental: {
     typedRoutes: true,
+    ppr: "incremental",
   },
   /* config options here */
 };
