@@ -143,7 +143,7 @@ export async function fetchFilteredInvoices(
     }
 
     // Map the data to match your application's expected format
-    const invoices: Invoice[] = data.map((invoice) => ({
+    const invoices: Invoice[] = data.map((invoice: any) => ({
       id: invoice.id,
       amount: parseFloat(invoice.amount), // Ensure amount is a number
       date: invoice.date,
