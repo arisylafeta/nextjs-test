@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { generatePagination } from '@/app/lib/utils';
 import { usePathname, useSearchParams } from 'next/navigation';
+import { Route } from 'next';
 
 export default function Pagination({ totalPages }: { totalPages: number }) {
   const pathname = usePathname();
@@ -15,12 +16,11 @@ export default function Pagination({ totalPages }: { totalPages: number }) {
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
     params.set('page', pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
+    return `${pathname}?${params.toString()}` as Route;
   };
+
   return (
     <>
-      {/*  NOTE: Uncomment this code in Chapter 11 */}
-
       <div className="inline-flex">
         <PaginationArrow
           direction="left"
@@ -84,7 +84,7 @@ function PaginationNumber({
   return isActive || position === 'middle' ? (
     <div className={className}>{page}</div>
   ) : (
-    <Link href={href} className={className}>
+    <Link href={href as Route} className={className}>
       {page}
     </Link>
   );
@@ -109,17 +109,16 @@ function PaginationArrow({
     },
   );
 
-  const icon =
-    direction === 'left' ? (
-      <ArrowLeftIcon className="w-4" />
-    ) : (
-      <ArrowRightIcon className="w-4" />
-    );
+  const icon = direction === 'left' ? (
+    <ArrowLeftIcon className="w-4" />
+  ) : (
+    <ArrowRightIcon className="w-4" />
+  );
 
   return isDisabled ? (
     <div className={className}>{icon}</div>
   ) : (
-    <Link className={className} href={href}>
+    <Link className={className} href={href as Route}>
       {icon}
     </Link>
   );

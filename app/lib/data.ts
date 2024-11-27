@@ -6,6 +6,7 @@ import {
   InvoicesTable,
   LatestInvoiceRaw,
   Revenue,
+  Invoice,
 } from './definitions';
 import { formatCurrency } from './utils';
 
@@ -112,22 +113,11 @@ export async function fetchCardData() {
 }
 
 const ITEMS_PER_PAGE = 6;
-// TypeScript Interface Update
-interface Invoice {
-  id: string; // UUIDs are represented as strings
-  amount: number;
-  date: string; // or Date, depending on how you handle dates
-  status: string;
-  name: string;
-  email: string;
-  image_url: string;
-}
 
-// In your fetchFilteredInvoices function
 export async function fetchFilteredInvoices(
   query: string,
   currentPage: number,
-): Promise<Invoice[]> {
+): Promise<InvoicesTable[]> {
   const offset = (currentPage - 1) * ITEMS_PER_PAGE;
 
   try {
@@ -143,8 +133,9 @@ export async function fetchFilteredInvoices(
     }
 
     // Map the data to match your application's expected format
-    const invoices: Invoice[] = data.map((invoice: any) => ({
+    const invoices: InvoicesTable[] = data.map((invoice: any) => ({
       id: invoice.id,
+      customer_id: invoice.customer_id,
       amount: parseFloat(invoice.amount), // Ensure amount is a number
       date: invoice.date,
       status: invoice.status,

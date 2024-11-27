@@ -8,17 +8,20 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
+import { Route } from 'next';
+
 const links = [
-  { name: 'Home', href: '/dashboard', icon: HomeIcon },
+  { name: 'Home', href: '/dashboard' as Route, icon: HomeIcon },
   {
     name: 'Invoices',
-    href: '/dashboard/invoices',
+    href: '/dashboard/invoices' as Route,
     icon: DocumentDuplicateIcon,
   },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
-];
+  { name: 'Customers', href: '/dashboard/customers' as Route, icon: UserGroupIcon },
+] as const;
+// Map of links to display in the side navigation.
+// Depending on the size of the application, this would be stored in a database.
+
 
 export default function NavLinks() {
   const pathname = usePathname();

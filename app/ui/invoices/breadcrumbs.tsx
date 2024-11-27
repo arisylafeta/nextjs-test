@@ -1,6 +1,7 @@
 import { clsx } from 'clsx';
 import Link from 'next/link';
 import { lusitana } from '@/app/ui/fonts';
+import { Route } from 'next';
 
 interface Breadcrumb {
   label: string;
@@ -24,7 +25,7 @@ export default function Breadcrumbs({
               breadcrumb.active ? 'text-gray-900' : 'text-gray-500',
             )}
           >
-            <Link href={breadcrumb.href}>{breadcrumb.label}</Link>
+            <Link href={breadcrumb.href as Route}>{breadcrumb.label}</Link>
             {index < breadcrumbs.length - 1 ? (
               <span className="mx-3 inline-block">/</span>
             ) : null}
