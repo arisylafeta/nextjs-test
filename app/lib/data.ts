@@ -9,8 +9,10 @@ import {
   Invoice,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { notFound } from 'next/navigation';
 
-const supabase = createClient(
+
+export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
@@ -198,7 +200,7 @@ export async function fetchInvoiceById(id: string) {
     };
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    notFound();
   }
 }
 

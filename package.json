@@ -2,8 +2,9 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev",
-    "start": "next start"
+    "dev": "NODE_NO_WARNINGS=1 next dev",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.4",
@@ -27,7 +28,9 @@
     "@types/bcrypt": "^5.0.2",
     "@types/node": "^20.14.8",
     "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0"
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.0.3"
   },
   "pnpm": {
     "peerDependencyRules": {

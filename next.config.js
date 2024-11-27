@@ -15,6 +15,15 @@ const nextConfig = {
     typedRoutes: true,
     ppr: "incremental",
   },
+  webpack: (config, { isServer }) => {
+    config.ignoreWarnings = [
+      {
+        module: /node_modules/,
+        message: /The `punycode` module is deprecated/,
+      },
+    ];
+    return config;
+  },
   /* config options here */
 };
 
